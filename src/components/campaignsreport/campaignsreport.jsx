@@ -46,7 +46,7 @@ export default function CampaignReport() {
     const raw = localStorage.getItem("user");
     const parsed = safeParse(raw);
     const extracted = extractAffiliateData(parsed);
-    return extracted?.pubId || query.get("pubId") || 1;
+    return extracted?.pubId || query.get("pubId");
   });
 
   const activeToast = useRef(null);
