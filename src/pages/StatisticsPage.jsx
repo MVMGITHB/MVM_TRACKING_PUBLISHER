@@ -1,3 +1,4 @@
+import CampaignReport from "../components/campaignsreport/campaignsreport.jsx";
 import StatisticsDashboard from "../components/Staticstics/StatisticsDashboard.jsx";
 
 const StatisticsPage = () => {
@@ -13,6 +14,7 @@ const StatisticsPage = () => {
         Analyze your campaign performance, revenue, and key metrics with
         clarity.
       </p>
+      <CampaignReport />
 
       <StatisticsDashboard />
     </div>

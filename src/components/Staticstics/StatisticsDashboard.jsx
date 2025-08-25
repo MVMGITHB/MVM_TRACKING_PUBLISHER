@@ -10,7 +10,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import CampaignReport from "../campaignsreport/campaignsreport.jsx";
 
 const StatisticsDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -103,9 +102,7 @@ const StatisticsDashboard = () => {
   };
 
   return (
-    <main className="flex-1 px-2 md:px-6 lg:px-12">
-      <CampaignReport />
-
+    <main className="flex-1 px-2 md:px-6 lg:px-12 border shadow-2xl rounded-2xl p-6">
       {/* Toolbar */}
       <div className="flex flex-wrap md:flex-nowrap items-center justify-between gap-2 mb-4">
         <div className="flex flex-wrap gap-2 items-center">
@@ -159,7 +156,7 @@ const StatisticsDashboard = () => {
 
       {/* Chart */}
       {showCharts && rows.length > 0 && (
-        <div className="bg-white rounded-xl shadow-md p-4 mb-6 overflow-x-auto">
+        <div className="bg-white rounded-xl shadow-md mb-6 overflow-x-auto border p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold text-gray-700">
               Campaign Chart
@@ -195,7 +192,7 @@ const StatisticsDashboard = () => {
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow-md">
+      <div className="overflow-x-auto bg-white rounded-xl shadow-md border p-6">
         <table className="min-w-full divide-y divide-gray-200 text-sm">
           <thead className="bg-gray-50">
             <tr>
@@ -211,7 +208,7 @@ const StatisticsDashboard = () => {
               ].map((header) => (
                 <th
                   key={header}
-                  className="px-2 md:px-4 py-2 text-xs md:text-sm text-right font-medium text-gray-500"
+                  className="px-2 md:px-4 py-2 text-xs md:text-sm text-right font-medium text-gray-500 "
                 >
                   {header}
                 </th>

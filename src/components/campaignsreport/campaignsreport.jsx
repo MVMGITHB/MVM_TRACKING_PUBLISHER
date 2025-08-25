@@ -121,7 +121,7 @@ export default function CampaignReport() {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-6 mb-6">
+    <div className="bg-white rounded-xl p-6 mb-6 border shadow-2xl">
       {/* Date Picker & Actions */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
         <div className="flex gap-2 flex-wrap items-center">
@@ -156,8 +156,8 @@ export default function CampaignReport() {
 
       {/* Report Table */}
       {report.length > 0 ? (
-        <div className="overflow-x-auto p-6" id="hide-scrollbar">
-          <table className="min-w-full divide-y divide-gray-200">
+        <div className="overflow-x-auto p-6 " id="hide-scrollbar">
+          <table className="min-w-full divide-y divide-gray-200 border">
             <thead className="bg-gray-50">
               <tr>
                 {Object.keys(report[0]).map((key) => (
