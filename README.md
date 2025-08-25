@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 # 📊 MVM Tracking Panel – Publisher Dashboard  
 
 The **MVM Tracking Panel (Publisher)** is a modern, responsive dashboard built with **React, TailwindCSS, and Node.js (API integration)** that allows publishers/affiliates to seamlessly manage their campaigns, track performance, and optimize earnings.  
@@ -60,4 +58,3 @@ npm install
 # Start development server
 npm run dev
 
->>>>>>> f8973a6cdae918c41d8842bfb2f5b2a5790f0029
