@@ -114,7 +114,9 @@ export default function AffiliateGeneral() {
     setLoading(true);
     try {
       if (!affiliateId) throw new Error("Affiliate id not available.");
-      const finalUrl = buildPostbackUrlWithKeysInOrder(["click_id", "payout"]);
+      const finalUrl = buildPostbackUrlWithKeysInOrder(
+        params.map((p) => p.key) // keep order of all params
+      );
       setFormData((prev) => ({ ...prev, postBackUrl: finalUrl }));
       await api.patch(`/affiliates/updatePostbackUrl/${affiliateId}`, {
         postBackUrl: finalUrl,
@@ -129,6 +131,16 @@ export default function AffiliateGeneral() {
 
   const updateParam = (key, value) =>
     setParams((prev) => prev.map((p) => (p.key === key ? { ...p, value } : p)));
+
+  const addParam = () => setParams((prev) => [...prev, { key: "", value: "" }]);
+
+  const updateParamKey = (oldKey, newKey) =>
+    setParams((prev) =>
+      prev.map((p) => (p.key === oldKey ? { ...p, key: newKey } : p))
+    );
+
+  const removeParam = (key) =>
+    setParams((prev) => prev.filter((p) => p.key !== key));
 
   const inputStyle =
     "w-full h-[45px] px-3 bg-gray-50 border border-gray-200 rounded-lg shadow-sm text-gray-800 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300 focus:outline-none transition-all duration-200";
@@ -158,29 +170,46 @@ export default function AffiliateGeneral() {
         />
 
         <div className="flex flex-col gap-3 mt-2">
-          {params.map((p) => (
+          {params.map((p, index) => (
             <motion.div
-              key={p.key}
-              className="flex flex-col sm:flex-row gap-2"
+              key={index}
+              className="flex flex-col sm:flex-row gap-2 items-center"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4 }}
             >
               <input
                 type="text"
+                placeholder="Key"
                 value={p.key}
-                disabled
-                className="flex-1 px-3 py-2 border rounded-lg bg-gray-100 text-gray-600 font-semibold"
+                onChange={(e) => updateParamKey(p.key, e.target.value)}
+                className="flex-1 px-3 py-2 border rounded-lg bg-white text-gray-700 font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300"
               />
               <input
                 type="text"
+                placeholder="Value"
                 value={p.value}
                 onChange={(e) => updateParam(p.key, e.target.value)}
                 className="flex-1 px-3 py-2 border rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300"
               />
+              <button
+                type="button"
+                onClick={() => removeParam(p.key)}
+                className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+              >
+                ✕
+              </button>
             </motion.div>
           ))}
         </div>
+
+        <button
+          type="button"
+          onClick={addParam}
+          className="mt-2 w-full bg-green-500 text-white rounded-lg py-2 hover:bg-green-600 transition"
+        >
+          ➕ Add Parameter
+        </button>
 
         <motion.p
           className="mt-3 text-sm text-gray-700 break-all bg-gray-50 px-4 py-2 rounded-lg border"

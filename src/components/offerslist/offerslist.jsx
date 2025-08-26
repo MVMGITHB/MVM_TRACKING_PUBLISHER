@@ -37,7 +37,7 @@ export default function OffersTable() {
   }, []);
 
   const buildTrackingUrl = (compId, pubId) =>
-    `https://trakingbackend.onrender.com/api/clicks?campaign_id=${compId}&pub_id=${pubId}&originalClick={}`;
+    `https://offer.mvmtracking.com/api/clicks?campaign_id=${compId}&pub_id=${pubId}&originalClick={}`;
 
   const filteredOffers = campaigns.filter((offer) => {
     if (activeTab === "featured") return offer.featured;

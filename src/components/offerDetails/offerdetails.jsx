@@ -89,7 +89,7 @@ export default function OfferDetailsFull({ offer }) {
   };
 
   const buildTrackingUrl = (compId, pubId) =>
-    `https://trakingbackend.onrender.com/api/clicks?campaign_id=${compId}&pub_id=${pubId}&originalClick={}`;
+    `https://offer.mvmtracking.com/api/clicks?campaign_id=${compId}&pub_id=${pubId}&originalClick={}`;
 
   // Static labels
   const accessibility = "Accessible";
