@@ -192,55 +192,72 @@ const StatisticsDashboard = () => {
       )}
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white rounded-xl shadow-md border p-6">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-50">
-            <tr>
-              {[
-                "Campaign",
-                "Clicks",
-                "Payout",
-                "Payout in INR",
-                "Conversions",
-                "Conversion Rate (CR)",
-                "Sale Amount",
-                "Sale Amount in INR",
-              ].map((header) => (
-                <th
-                  key={header}
-                  className="px-2 md:px-4 py-2 text-xs md:text-sm text-right font-medium text-gray-500 "
-                >
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
-            {paginatedRows.map((row, index) => (
-              <tr
-                key={row.Campaign ?? index}
-                className={index % 2 === 0 ? "bg-gray-50" : ""}
-              >
-                {Object.keys(row).map((key) => (
-                  <td key={key} className="px-2 md:px-4 py-2 text-right">
-                    {row[key]}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-          {totals && (
-            <tfoot className="bg-gray-100 font-semibold">
+      <div className="overflow-x-auto bg-white rounded-2xl shadow-lg border border-gray-200 p-4">
+        <div className="min-w-max">
+          <table className="w-full text-sm text-right border-collapse">
+            {/* Header */}
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">
               <tr>
-                {Object.keys(totals).map((key) => (
-                  <td key={key} className="px-2 md:px-4 py-2 text-right">
-                    {totals[key]}
-                  </td>
+                {[
+                  "Campaign",
+                  "Clicks",
+                  "Payout",
+                  "Payout in INR",
+                  "Conversions",
+                  "Conversion Rate (CR)",
+                  "Sale Amount",
+                  "Sale Amount in INR",
+                ].map((header) => (
+                  <th
+                    key={header}
+                    className="px-3 md:px-5 py-3 text-xs md:text-sm font-semibold text-gray-700 tracking-wide text-right whitespace-nowrap"
+                  >
+                    {header}
+                  </th>
                 ))}
               </tr>
-            </tfoot>
-          )}
-        </table>
+            </thead>
+
+            {/* Body */}
+            <tbody className="divide-y divide-gray-200">
+              {paginatedRows.map((row, index) => (
+                <tr
+                  key={row.Campaign ?? index}
+                  className={`transition-colors duration-150 ${
+                    index % 2 === 0
+                      ? "bg-gray-50 hover:bg-gray-100"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
+                  {Object.keys(row).map((key) => (
+                    <td
+                      key={key}
+                      className="px-3 md:px-5 py-3 text-gray-700 whitespace-nowrap"
+                    >
+                      {row[key]}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+
+            {/* Footer (Totals) */}
+            {totals && (
+              <tfoot className="bg-gray-100 font-bold text-gray-800 border-t border-gray-300">
+                <tr>
+                  {Object.keys(totals).map((key) => (
+                    <td
+                      key={key}
+                      className="px-3 md:px-5 py-3 whitespace-nowrap"
+                    >
+                      {totals[key]}
+                    </td>
+                  ))}
+                </tr>
+              </tfoot>
+            )}
+          </table>
+        </div>
       </div>
 
       {/* Pagination */}
