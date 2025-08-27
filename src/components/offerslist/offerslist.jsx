@@ -13,12 +13,43 @@ import toast from "react-hot-toast";
 import OfferDetails from "../offerDetails/offerdetails";
 import api from "../baseurl/baseurl";
 
+// --- Helpers (same as OfferDetailsFull) ---
+function safeParse(raw) {
+  try {
+    if (!raw || raw === "undefined") return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+function extractAffiliateData(stored) {
+  if (!stored) return null;
+  return stored.pubId || stored.affiliate?.pubId || stored.user?.pubId || null;
+}
+// -----------------------------------------
+
 export default function OffersTable() {
   const [activeTab, setActiveTab] = useState("all");
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pubId, setPubId] = useState(1); // default fallback
 
+  // ✅ Get pubId from localStorage
+  useEffect(() => {
+    const raw = localStorage.getItem("user");
+    const parsed = safeParse(raw);
+    setPubId(extractAffiliateData(parsed) || 1); // fallback to 1
+  }, []);
+
+  const buildTrackingUrl = (compId, pubId) =>
+    `https://offer.mvmtracking.com/api/clicks?campaign_id=${compId}&pub_id=${pubId}&originalClick={}`;
+
+  const filteredOffers = campaigns.filter((offer) => {
+    if (activeTab === "featured") return offer.featured;
+    if (activeTab === "my") return offer.compId === 370; // example
+    return true;
+  });
   useEffect(() => {
     async function fetchCampaigns() {
       try {
@@ -35,15 +66,6 @@ export default function OffersTable() {
     }
     fetchCampaigns();
   }, []);
-
-  const buildTrackingUrl = (compId, pubId) =>
-    `https://offer.mvmtracking.com/api/clicks?campaign_id=${compId}&pub_id=${pubId}&originalClick={}`;
-
-  const filteredOffers = campaigns.filter((offer) => {
-    if (activeTab === "featured") return offer.featured;
-    if (activeTab === "my") return offer.compId === 370; // example
-    return true;
-  });
 
   const copyToClipboard = async (url) => {
     try {
@@ -179,7 +201,7 @@ export default function OffersTable() {
                   <td className="px-2 md:px-4 py-2">
                     <button
                       onClick={() =>
-                        copyToClipboard(buildTrackingUrl(offer.compId, 1))
+                        copyToClipboard(buildTrackingUrl(offer.compId, pubId))
                       }
                       className="flex items-center gap-1 text-blue-600 hover:underline text-xs md:text-sm"
                     >

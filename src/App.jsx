@@ -56,15 +56,15 @@ export default function App() {
             <ProtectedRoute>
               <AppLayout active={active} setActive={setActive}>
                 <Routes>
-                  <Route path="/partner/dashboard" element={<Dashboard />} />
-                  <Route
-                    path="/partner/marketplace"
-                    element={<Marketplace />}
-                  />
                   <Route
                     path="/partner/statistics-dashboard"
                     element={<StatisticsPage />}
                   />
+                  <Route
+                    path="/partner/marketplace"
+                    element={<Marketplace />}
+                  />
+                  {/* <Route path="/partner/" element={} /> */}
                   <Route path="/partner/my-settings" element={<Settings />} />
                   <Route
                     path="*"

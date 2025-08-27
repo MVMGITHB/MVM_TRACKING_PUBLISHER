@@ -75,17 +75,18 @@ export default function Sidebar() {
   };
 
   const menuItems = [
-    { title: "Dashboard", href: "/partner/dashboard", icon: mdiSpeedometer },
+    {
+      title: "Dashboard",
+      href: "/partner/statistics-dashboard",
+      icon: mdiChartBoxOutline,
+    },
+    // { title: "Dashboard", href: "/partner/dashboard", icon: mdiSpeedometer },
     {
       title: "Marketplace",
       href: "/partner/marketplace",
       icon: mdiStorefrontOutline,
     },
-    {
-      title: "Statistics",
-      href: "/partner/statistics-dashboard",
-      icon: mdiChartBoxOutline,
-    },
+
     { title: "My Postback", href: "/partner/my-settings", icon: mdiCog },
   ];
 
