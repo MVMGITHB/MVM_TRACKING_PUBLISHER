@@ -24,7 +24,7 @@ export default function LoginForm() {
       login(userData, jwt);
 
       toast.success("Login successful 🎉");
-      navigate("/partner/dashboard", { replace: true });
+      navigate("/partner/statistics-dashboard", { replace: true });
     } catch (err) {
       console.error("Login error:", err);
       toast.error(err.response?.data?.message || "Login failed ❌");
