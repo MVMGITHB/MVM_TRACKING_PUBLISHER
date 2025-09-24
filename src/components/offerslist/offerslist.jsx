@@ -50,13 +50,22 @@ export default function OffersTable() {
     if (activeTab === "my") return offer.compId === 370; // example
     return true;
   });
+
+  const savedAffiliate = JSON.parse(localStorage.getItem("affiliate"));
+  console.log(savedAffiliate.id)
+
   useEffect(() => {
     async function fetchCampaigns() {
+
+
       try {
-        const response = await api.get("/compaigns/getALLCompaign");
+
+        
+        const response = await api.get(`/compaigns/getALLCompaigns?affiliateId=${savedAffiliate?.id}`);
         if (response.data?.success) {
           setCampaigns(response.data.data);
         }
+        
       } catch (error) {
         console.error("Error fetching campaigns:", error);
         toast.error("Failed to load campaigns");

@@ -22,8 +22,9 @@ export default function LoginForm() {
       const jwt = data.token ?? data.jwt ?? res.data?.token ?? null;
 
       login(userData, jwt);
-
+      localStorage.setItem("affiliate", JSON.stringify(res.data.affiliate));
       toast.success("Login successful 🎉");
+      
       navigate("/partner/statistics-dashboard", { replace: true });
     } catch (err) {
       console.error("Login error:", err);
