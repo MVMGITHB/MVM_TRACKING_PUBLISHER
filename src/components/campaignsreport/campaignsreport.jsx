@@ -38,10 +38,10 @@ export default function CampaignReport() {
   const [startDate, setStartDate] = useState(formattedToday);
   const [endDate, setEndDate] = useState(formattedToday);
   const [report, setReport] = useState([]);
+  const [rangeType, setRangeType] = useState("today"); // NEW
 
   const query = useQuery();
 
-  // ✅ Fetch pubId from localStorage if available, otherwise fallback to query param or 1
   const [pubId, setPubId] = useState(() => {
     const raw = localStorage.getItem("user");
     const parsed = safeParse(raw);
@@ -79,6 +79,49 @@ export default function CampaignReport() {
         error: "Server error fetching report",
       }
     );
+  };
+
+  // ✅ Handle Range Type Change
+  const handleRangeChange = (value) => {
+    setRangeType(value);
+    const today = new Date();
+    let start, end;
+
+    switch (value) {
+      case "today":
+        start = end = today;
+        break;
+      case "yesterday":
+        start = end = new Date(today.setDate(today.getDate() - 1));
+        break;
+      case "week":
+        end = new Date();
+        start = new Date();
+        start.setDate(end.getDate() - 6);
+        break;
+      case "lastweek":
+        end = new Date();
+        end.setDate(end.getDate() - 7);
+        start = new Date();
+        start.setDate(end.getDate() - 6);
+        break;
+      case "month":
+        end = new Date();
+        start = new Date(end.getFullYear(), end.getMonth(), 1);
+        break;
+      case "lastmonth":
+        end = new Date(end.getFullYear(), end.getMonth(), 0); // last day of prev month
+        start = new Date(end.getFullYear(), end.getMonth(), 1);
+        break;
+      case "custom":
+        return; // do nothing, wait for manual date selection
+      default:
+        return;
+    }
+
+    const formatDate = (d) => d.toISOString().split("T")[0];
+    setStartDate(formatDate(start));
+    setEndDate(formatDate(end));
   };
 
   useEffect(() => {
@@ -120,31 +163,57 @@ export default function CampaignReport() {
     });
   };
 
+  // Default load → Today
+  useEffect(() => {
+    handleRangeChange("today");
+  }, []);
+
   return (
     <div className="bg-white rounded-xl p-6 mb-6 border shadow-2xl">
       {/* Date Picker & Actions */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
         <div className="flex gap-2 flex-wrap items-center">
-          <div className="flex gap-2">
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-          </div>
+
+          {/* ✅ Dropdown */}
+          <select
+            value={rangeType}
+            onChange={(e) => handleRangeChange(e.target.value)}
+            className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          >
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="week">This Week</option>
+            <option value="lastweek">Last Week</option>
+            <option value="month">This Month</option>
+            <option value="lastmonth">Last Month</option>
+            <option value="custom">Custom Range</option>
+          </select>
+
+          {/* ✅ Show only if Custom */}
+          {rangeType === "custom" && (
+            <div className="flex gap-2">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+          )}
+
           <button
             onClick={fetchReport}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             <i className="fa fa-download"></i> Fetch Report
           </button>
+
           <button
             onClick={exportCSV}
             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
@@ -156,7 +225,7 @@ export default function CampaignReport() {
 
       {/* Report Table */}
       {report.length > 0 ? (
-        <div className="overflow-x-auto p-6 " id="hide-scrollbar">
+        <div className="overflow-x-auto p-6" id="hide-scrollbar">
           <table className="min-w-full divide-y divide-gray-200 border">
             <thead className="bg-gray-50">
               <tr>
