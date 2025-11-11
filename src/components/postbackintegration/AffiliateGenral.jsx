@@ -38,6 +38,8 @@ export default function AffiliateGeneral() {
   // 🔹 Get Affiliate ID from localStorage
   useEffect(() => {
     const stored = safeParse(localStorage.getItem("user"));
+
+    console.log("stored",stored)
     if (stored?.affiliate?.id) {
       setAffiliateId(stored.affiliate.id);
     }

@@ -82,7 +82,7 @@ export default function Sidebar() {
     },
     // { title: "Dashboard", href: "/partner/dashboard", icon: mdiSpeedometer },
     {
-      title: "Marketplace",
+      title: "My Offers",
       href: "/partner/marketplace",
       icon: mdiStorefrontOutline,
     },
@@ -93,6 +93,8 @@ export default function Sidebar() {
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />
+
+      
 
       {/* Mobile toggle button */}
       <button
@@ -119,8 +121,11 @@ export default function Sidebar() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="fixed top-0 left-0 h-full w-72 md:w-75 bg-gradient-to-b from-white via-orange-50/40 to-white border-r shadow-xl flex flex-col justify-between z-50 rounded-tr-3xl md:top-12 md:h-[calc(100%-4rem)]"
       >
+
+        
         {/* Menu */}
         <div className="flex flex-col py-6 px-2">
+          <img src="https://mvmbs.com/images/logo.webp" alt="" className="w-[50px] h-[50px]" />
           {menuItems.map((item) => (
             <Link
               key={item.href}

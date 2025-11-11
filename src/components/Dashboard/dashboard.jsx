@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import api from "../baseurl/baseurl";
+import BalanceCard from "./BalanceCard";
 
 // Stat config
 const statsConfig = [
@@ -57,6 +58,9 @@ const DashboardCards = () => {
   };
 
   return (
+
+    <> 
+    <BalanceCard/>
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 p-4">
       {statsConfig.map(({ key, title, prefix }) => {
         const value = stats[key] || 0;
@@ -108,6 +112,8 @@ const DashboardCards = () => {
         );
       })}
     </div>
+    </>
+    
   );
 };
 
