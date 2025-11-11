@@ -35,10 +35,12 @@ const DashboardStats = () => {
           return;
         }
 
+        
+
         // ✅ Correct endpoints
         const [dailyRes, last10Res] = await Promise.all([
-          axios.get(`${baseurl}/api/reports/daily/${pubId}`),
-          axios.get(`${baseurl}/api/reports/last10days/${pubId}`),
+          axios.get(`${baseurl}/api/reports/dailypubId/${pubId}`),
+          axios.get(`${baseurl}/api/reports/last10dayspubId/${pubId}`),
         ]);
 
         // ✅ Daily stats
