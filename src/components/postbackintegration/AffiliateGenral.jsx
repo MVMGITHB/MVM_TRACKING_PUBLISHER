@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import api from "../baseurl/baseurl.jsx";
-import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -25,20 +24,8 @@ function parseQueryToParams(queryString = "") {
   });
 }
 
-function extractAffiliateId(stored) {
-  if (!stored) return null;
-  return (
-    stored.id ||
-    stored.affiliate?.id ||
-    stored.user?.id ||
-    stored?.affiliateId ||
-    null
-  );
-}
-
 export default function AffiliateGeneral() {
-  const { id: paramId } = useParams();
-  const [affiliateId, setAffiliateId] = useState(paramId || null);
+  const [affiliateId, setAffiliateId] = useState(null);
   const [formData, setFormData] = useState({ postBackUrl: "" });
   const [loading, setLoading] = useState(false);
 
@@ -48,38 +35,40 @@ export default function AffiliateGeneral() {
     { key: "payout", value: "{payout}" },
   ]);
 
+  // 🔹 Get Affiliate ID from localStorage
   useEffect(() => {
-    if (paramId) {
-      setAffiliateId(paramId);
-      return;
+    const stored = safeParse(localStorage.getItem("user"));
+    if (stored?.affiliate?.id) {
+      setAffiliateId(stored.affiliate.id);
     }
-    if (typeof window === "undefined") return;
+  }, []);
 
-    const raw = localStorage.getItem("user");
-    const parsed = safeParse(raw);
-    if (!parsed) return;
+  // 🔹 Fetch affiliate data
+  useEffect(() => {
+    if (!affiliateId) return;
+    const fetchAffiliate = async () => {
+      try {
+        const res = await api.get(`/affiliates/getOneAffiliate/${affiliateId}`);
+        const affiliate = res.data;
 
-    const idFromStored = extractAffiliateId(parsed);
-    if (idFromStored) setAffiliateId(idFromStored);
+        if (affiliate?.postBackUrl) {
+          const parts = affiliate.postBackUrl.split("?");
+          const base = parts[0];
+          const parsedParams = parts[1] ? parseQueryToParams(parts[1]) : [];
+          setBaseUrl(base);
+          setParams(parsedParams.length ? parsedParams : params);
+          setFormData({ postBackUrl: affiliate.postBackUrl });
+        }
+      } catch (err) {
+        console.error("Error fetching affiliate:", err);
+        toast.error("Failed to load affiliate data.");
+      }
+    };
 
-    const storedPostback =
-      parsed.postBackUrl ||
-      parsed.affiliate?.postBackUrl ||
-      parsed.user?.postBackUrl;
-    if (storedPostback) {
-      const parts = storedPostback.split("?");
-      const storedBase = parts[0] || "";
-      const storedParams = parts[1] ? parseQueryToParams(parts[1]) : [];
-      setBaseUrl(storedBase || baseUrl);
+    fetchAffiliate();
+  }, [affiliateId]);
 
-      const filtered = storedParams.filter((p) =>
-        ["click_id", "payout"].includes(p.key)
-      );
-      setParams(filtered.length ? filtered : params);
-      setFormData((prev) => ({ ...prev, postBackUrl: storedPostback }));
-    }
-  }, [paramId]);
-
+  // 🔹 Format value (encode or wrap in {})
   const formatValue = (val = "") => {
     const trimmed = val.trim();
     return trimmed.includes("{") && trimmed.includes("}")
@@ -87,6 +76,7 @@ export default function AffiliateGeneral() {
       : encodeURIComponent(trimmed);
   };
 
+  // 🔹 Auto-update postback URL on input change
   useEffect(() => {
     const query = params
       .map((p) => `${encodeURIComponent(p.key)}=${formatValue(p.value)}`)
@@ -96,34 +86,28 @@ export default function AffiliateGeneral() {
     setFormData((prev) => ({ ...prev, postBackUrl: built }));
   }, [baseUrl, params]);
 
-  const buildPostbackUrlWithKeysInOrder = (keys) => {
-    const sep = baseUrl.includes("?") ? "&" : "?";
-    const map = params.reduce((acc, p) => {
-      if (p.key) acc[p.key] = p.value ?? "";
-      return acc;
-    }, {});
-    const parts = keys.map((k) => {
-      const rawVal = map[k] ?? "";
-      return `${encodeURIComponent(k)}=${rawVal.trim() || `{${k}}`}`;
-    });
-    return `${baseUrl.trim()}${sep}${parts.join("&")}`;
-  };
-
+  // 🔹 Update postback URL
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      if (!affiliateId) throw new Error("Affiliate id not available.");
-      const finalUrl = buildPostbackUrlWithKeysInOrder(
-        params.map((p) => p.key) // keep order of all params
-      );
-      setFormData((prev) => ({ ...prev, postBackUrl: finalUrl }));
+      if (!affiliateId) throw new Error("Affiliate ID not found.");
+
+      const query = params
+        .map((p) => `${encodeURIComponent(p.key)}=${formatValue(p.value)}`)
+        .join("&");
+      const sep = baseUrl.includes("?") ? "&" : "?";
+      const finalUrl = `${baseUrl.trim()}${query ? sep + query : ""}`;
+
       await api.patch(`/affiliates/updatePostbackUrl/${affiliateId}`, {
         postBackUrl: finalUrl,
       });
-      toast.success("Affiliate updated successfully!");
+
+      setFormData({ postBackUrl: finalUrl });
+      toast.success("✅ Affiliate postback updated!");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error updating affiliate");
+      console.error(err);
+      toast.error("Error updating affiliate");
     } finally {
       setLoading(false);
     }
@@ -133,12 +117,6 @@ export default function AffiliateGeneral() {
     setParams((prev) => prev.map((p) => (p.key === key ? { ...p, value } : p)));
 
   const addParam = () => setParams((prev) => [...prev, { key: "", value: "" }]);
-
-  const updateParamKey = (oldKey, newKey) =>
-    setParams((prev) =>
-      prev.map((p) => (p.key === oldKey ? { ...p, key: newKey } : p))
-    );
-
   const removeParam = (key) =>
     setParams((prev) => prev.filter((p) => p.key !== key));
 
@@ -182,7 +160,14 @@ export default function AffiliateGeneral() {
                 type="text"
                 placeholder="Key"
                 value={p.key}
-                onChange={(e) => updateParamKey(p.key, e.target.value)}
+                onChange={(e) => {
+                  const newKey = e.target.value;
+                  setParams((prev) =>
+                    prev.map((param, i) =>
+                      i === index ? { ...param, key: newKey } : param
+                    )
+                  );
+                }}
                 className="flex-1 px-3 py-2 border rounded-lg bg-white text-gray-700 font-medium focus:border-indigo-500 focus:ring-2 focus:ring-indigo-300"
               />
               <input
