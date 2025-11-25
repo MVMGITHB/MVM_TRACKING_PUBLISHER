@@ -12,6 +12,7 @@ import {
 import Icon from "@mdi/react";
 import toast, { Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
+import SidebarGroup from "./SidebarGroup";
 
 // Helpers
 function safeParse(raw) {
@@ -65,7 +66,7 @@ export default function Sidebar() {
 
   const menuItems = [
     { title: "Dashboard", href: "/partner/statistics-dashboard", icon: mdiChartBoxOutline },
-    { title: "My Offers", href: "/partner/marketplace", icon: mdiStorefrontOutline },
+    { title: "My Offers", href: "/partner/offer", icon: mdiStorefrontOutline },
     { title: "Conversion", href: "/partner/conversion", icon: mdiStorefrontOutline },
     { title: "My Postback", href: "/partner/my-settings", icon: mdiCog },
   ];
@@ -130,24 +131,27 @@ border-r border-sky-300/50
     text-base font-medium transition-all duration-300
 
     ${isActive 
-      ? "bg-sky-400 text-black shadow-lg"    // ACTIVE
-      : "bg-sky-500 text-white hover:bg-sky-600"}   // DEFAULT
+      ? "bg-sky-700 text-black shadow-lg"    // ACTIVE
+      : "bg-sky-200  text-black hover:bg-sky-600"}   // DEFAULT
   `}
 >
+
+
+  
   {/* Active highlight bar */}
-  {isActive && (
+  {/* {isActive && (
     <motion.div
       layoutId="bar"
       className="absolute left-0 top-0 h-full w-1 bg-sky-700 rounded-r-full"
     />
-  )}
+  )} */}
 
   <Icon
     path={item.icon}
     size={1}
     className={`
       transition-all
-      ${isActive ? "text-black" : "text-white group-hover:text-white"}
+      ${isActive ? "text-black" : "text-black group-hover:text-black"}
     `}
   />
 
@@ -157,16 +161,32 @@ border-r border-sky-300/50
                 
               );
             })}
+
+              {/* <SidebarGroup
+   title="Statistics"
+   icon={mdiChartBoxOutline}
+   items={[
+      { title: "Daily", href: "/daily" },
+      { title: "Conversions", href: "/conversions" },
+      { title: "Offers", href: "/offers" },
+      { title: "Smartlinks", href: "/smartlinks" },
+      { title: "Browsers", href: "/browsers" },
+   ]}
+/> */}
           </div>
         </div>
 
+
+      
+
+
         {/* Bottom User Area */}
-        <div className="px-5 py-5 border-t border-orange-300/40  bg-sky-500 
+        <div className="py-2 px-5  border-t border-orange-300/40  bg-sky-500 
  backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 flex items-center justify-center rounded-full 
-                 bg-gradient-to-r from-gray-700 to-gray-900
+                 bg-gradient-to-r from-gray-400 to-gray-600
                 text-white font-bold text-lg shadow-md">
                 {user?.name?.[0]?.toUpperCase() || "U"}
               </div>

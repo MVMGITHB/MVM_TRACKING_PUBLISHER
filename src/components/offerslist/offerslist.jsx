@@ -13,6 +13,8 @@ import toast from "react-hot-toast";
 import OfferDetails from "../offerDetails/offerdetails";
 import api from "../baseurl/baseurl";
 import { baseurl } from "../helper/Helper";
+import OfferDetail from "../../pages/OfferDetail";
+import { Link } from "react-router-dom";
 
 // --- Helpers (same as OfferDetailsFull) ---
 function safeParse(raw) {
@@ -178,7 +180,11 @@ export default function OffersTable() {
                   <Globe size={18} className="text-sky-600" />
                 </div>
                 <span className="font-medium text-gray-800 hover:text-sky-600 truncate max-w-[200px]">
-                  {offer.offerName}
+
+                  <Link to={`/partner/offer/${offer._id}`}>
+                   {offer.offerName}
+                  </Link>
+                 
                 </span>
               </td>
 
@@ -254,11 +260,13 @@ export default function OffersTable() {
   </div>
 
   {/* Offer Details Section */}
-  {selectedOffer && (
+  {/* {selectedOffer && (
     <div className="mt-6 border-t pt-6 animate-fadeUp">
       <OfferDetails offer={selectedOffer} />
+
+      <OfferDetail offer={selectedOffer} />
     </div>
-  )}
+  )} */}
 </div>
 
   );

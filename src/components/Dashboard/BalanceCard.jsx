@@ -26,7 +26,7 @@ const BalanceCard = () => {
         className="
           flex-1 bg-gradient-to-b from-orange-50 via-sky-100 to-sky-300
           rounded-xl shadow-lg p-6 flex items-start gap-4 
-          border border-orange-200/60 backdrop-blur-sm
+    
         "
       >
         <motion.img

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../baseurl/baseurl";
 import { ClipboardCopy, RefreshCw, Plus } from "lucide-react";
+import { useParams } from "react-router-dom";
 
 // --- Helpers ---
 function safeParse(raw) {
@@ -31,12 +32,14 @@ function extractAffiliateData(stored) {
 }
 // ----------------
 
-export default function OfferDetailsFull({ offer }) {
+export default function OfferDetailsFull() {
   const [offerData, setOfferData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
   const [pubId, setPubId] = useState(null);
+
+  const { id } = useParams();
 
   // Get pubId from localStorage
   useEffect(() => {
@@ -47,14 +50,14 @@ export default function OfferDetailsFull({ offer }) {
   }, []);
 
   useEffect(() => {
-    if (!offer?._id) return;
+    // if (id) return;
     let mounted = true;
 
     async function fetchOffer() {
       setLoading(true);
       setError(null);
       try {
-        const res = await api.get(`/compaigns/getOneCompaign/${offer._id}`);
+        const res = await api.get(`/compaigns/getOneCompaign/${id}`);
         if (!mounted) return;
         if (res.data?.success) setOfferData(res.data.data);
         else setError(res.data?.message || "Failed to fetch offer");
@@ -68,9 +71,9 @@ export default function OfferDetailsFull({ offer }) {
 
     fetchOffer();
     return () => (mounted = false);
-  }, [offer]);
+  }, [id]);
 
-  if (!offer) return null;
+  if (!id) return null;
   if (loading)
     return <p className="text-center py-6 text-gray-500">Loading...</p>;
   if (error) return <p className="text-center py-6 text-red-500">{error}</p>;
@@ -106,6 +109,8 @@ export default function OfferDetailsFull({ offer }) {
   const isRepeatable = "No";
 
   return (
+
+   
     <div className="w-full grid grid-cols-1 gap-8 md:grid-cols-12 animate-fadeUp">
 
   {/* LEFT COLUMN — DETAILS CARD */}
@@ -334,6 +339,8 @@ export default function OfferDetailsFull({ offer }) {
 
   </div>
 </div>
+
+
 
   );
 }

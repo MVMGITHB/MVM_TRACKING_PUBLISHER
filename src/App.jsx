@@ -15,6 +15,7 @@ import LoginForm from "./components/UserManagement/login.jsx";
 import ConversionReport from "./components/conversion/ConversionReport.jsx";
 import Conversion from "./pages/Conversion.jsx";
 import RootRedirect from "./components/UserManagement/RootRedirect.jsx";
+import OfferDetail from "./pages/OfferDetail.jsx";
 
 // Elegant Layout wrapper for protected routes
 function AppLayout({ active, setActive, children }) {
@@ -68,8 +69,13 @@ export default function App() {
                     element={<StatisticsPage />}
                   />
                   <Route
-                    path="/partner/marketplace"
+                    path="/partner/offer"
                     element={<Marketplace />}
+                  />
+
+                   <Route
+                    path="/partner/offer/:id"
+                    element={<OfferDetail />}
                   />
 
                   <Route
