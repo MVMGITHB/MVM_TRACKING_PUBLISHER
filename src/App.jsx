@@ -12,11 +12,14 @@ import Marketplace from "./pages/Marketplace.jsx";
 import StatisticsPage from "./pages/StatisticsPage.jsx";
 import Settings from "./pages/Settings.jsx";
 import LoginForm from "./components/UserManagement/login.jsx";
+import ConversionReport from "./components/conversion/ConversionReport.jsx";
+import Conversion from "./pages/Conversion.jsx";
 
 // Elegant Layout wrapper for protected routes
 function AppLayout({ active, setActive, children }) {
   return (
-    <div className="flex h-screen bg-gradient-to-br from-orange-50 via-white to-orange-100">
+    <div className="flex h-screen bg-sky-100
+ ">
       {/* Sidebar */}
       <Sidebar active={active} setActive={setActive} />
 
@@ -48,6 +51,7 @@ export default function App() {
       <Routes>
         {/* Public Login */}
         <Route path="/login" element={<LoginForm />} />
+        {/* <Route path="/" element={<LoginForm />} /> */}
 
         {/* Protected Routes */}
         <Route
@@ -63,6 +67,11 @@ export default function App() {
                   <Route
                     path="/partner/marketplace"
                     element={<Marketplace />}
+                  />
+
+                  <Route
+                    path="/partner/conversion"
+                    element={<Conversion />}
                   />
                   {/* <Route path="/partner/" element={} /> */}
                   <Route path="/partner/my-settings" element={<Settings />} />

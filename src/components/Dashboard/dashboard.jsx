@@ -61,57 +61,64 @@ const DashboardCards = () => {
 
     <> 
     <BalanceCard/>
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 p-4">
-      {statsConfig.map(({ key, title, prefix }) => {
-        const value = stats[key] || 0;
-        const change = value > 0 ? "up" : value < 0 ? "down" : "none";
+   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 p-4">
+  {statsConfig.map(({ key, title, prefix }) => {
+    const value = stats[key] || 0;
+    const change = value > 0 ? "up" : value < 0 ? "down" : "none";
 
-        return (
-          <div
-            key={key}
-            className="bg-white rounded-3xl shadow-lg p-6 flex flex-col justify-between border border-gray-100 hover:shadow-2xl transition duration-300"
-          >
-            {/* Header */}
-            <div className="flex justify-between items-center">
-              <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-                {title}
-              </h2>
-              {change === "up" ? (
-                <ArrowUpRight className="text-green-500 w-5 h-5" />
-              ) : change === "down" ? (
-                <ArrowDownRight className="text-red-500 w-5 h-5" />
-              ) : (
-                <Minus className="text-gray-400 w-5 h-5" />
-              )}
-            </div>
+    return (
+      <div
+        key={key}
+        className="
+          bg-gradient-to-b from-orange-100 via-sky-100 to-white
+          rounded-2xl p-6 border border-orange-200/40 
+          shadow-[0_4px_20px_rgba(255,170,90,0.15)]
+          hover:shadow-[0_6px_28px_rgba(255,170,90,0.25)]
+          transition-all duration-300
+          flex flex-col justify-between
+        "
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h2 className="text-sm font-semibold text-orange-700 uppercase tracking-wide">
+            {title}
+          </h2>
 
-            {/* Value */}
-            <p className="text-3xl md:text-4xl font-bold text-gray-900 mt-4">
-              {prefix}
-              {value.toLocaleString()}
-            </p>
+          {change === "up" ? (
+            <ArrowUpRight className="text-green-500 w-5 h-5" />
+          ) : change === "down" ? (
+            <ArrowDownRight className="text-red-500 w-5 h-5" />
+          ) : (
+            <Minus className="text-gray-400 w-5 h-5" />
+          )}
+        </div>
 
-            {/* Today + MTD */}
-            <div className="mt-5 flex flex-col gap-2 text-xs text-gray-500">
-              <div className="flex justify-between">
-                <span>Today</span>
-                <span className="font-medium text-gray-700">
-                  {prefix}
-                  {value.toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>MTD</span>
-                <span className="font-medium text-gray-700">
-                  {prefix}
-                  {value.toLocaleString()}
-                </span>
-              </div>
-            </div>
+        {/* Value */}
+        <p className="text-3xl md:text-4xl font-bold text-gray-900 mt-4">
+          {prefix}{value.toLocaleString()}
+        </p>
+
+        {/* Today + MTD */}
+        <div className="mt-5 flex flex-col gap-3 text-sm text-gray-600">
+          <div className="flex justify-between">
+            <span className="font-medium">Today</span>
+            <span className="font-semibold text-gray-800">
+              {prefix}{value.toLocaleString()}
+            </span>
           </div>
-        );
-      })}
-    </div>
+
+          <div className="flex justify-between">
+            <span className="font-medium">MTD</span>
+            <span className="font-semibold text-gray-800">
+              {prefix}{value.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
     </>
     
   );

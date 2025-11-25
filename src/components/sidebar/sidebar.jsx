@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  mdiSpeedometer,
   mdiStorefrontOutline,
   mdiChartBoxOutline,
   mdiCog,
@@ -14,13 +13,12 @@ import Icon from "@mdi/react";
 import toast, { Toaster } from "react-hot-toast";
 import { motion } from "framer-motion";
 
-// --- Helpers ---
+// Helpers
 function safeParse(raw) {
   try {
     if (!raw || raw === "undefined") return null;
     return JSON.parse(raw);
-  } catch (e) {
-    console.error("safeParse: failed to parse", e);
+  } catch {
     return null;
   }
 }
@@ -41,7 +39,6 @@ function extractAffiliateData(stored) {
       null,
   };
 }
-// ----------------
 
 export default function Sidebar() {
   const location = useLocation();
@@ -50,156 +47,157 @@ export default function Sidebar() {
   const [user, setUser] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    setActive(location.pathname);
-  }, [location.pathname]);
+  useEffect(() => setActive(location.pathname), [location.pathname]);
 
   useEffect(() => {
-    const raw = localStorage.getItem("user");
-    const parsed = safeParse(raw);
-    const extracted = extractAffiliateData(parsed);
-    setUser(extracted);
+    const parsed = safeParse(localStorage.getItem("user"));
+    setUser(extractAffiliateData(parsed));
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-
-    toast.success("Logged out successfully 👋", {
-      style: { background: "#fff", color: "#111", fontWeight: 600 },
+    toast.success("Logged out 👋", {
+      style: { background: "#fff", color: "#333", fontWeight: 600 },
       iconTheme: { primary: "#f97316", secondary: "#fff" },
     });
-
-    setTimeout(() => {
-      navigate("/login");
-    }, 1500);
+    setTimeout(() => navigate("/login"), 1000);
   };
 
   const menuItems = [
-    {
-      title: "Dashboard",
-      href: "/partner/statistics-dashboard",
-      icon: mdiChartBoxOutline,
-    },
-    // { title: "Dashboard", href: "/partner/dashboard", icon: mdiSpeedometer },
-    {
-      title: "My Offers",
-      href: "/partner/marketplace",
-      icon: mdiStorefrontOutline,
-    },
-
+    { title: "Dashboard", href: "/partner/statistics-dashboard", icon: mdiChartBoxOutline },
+    { title: "My Offers", href: "/partner/marketplace", icon: mdiStorefrontOutline },
+    { title: "Conversion", href: "/partner/conversion", icon: mdiStorefrontOutline },
     { title: "My Postback", href: "/partner/my-settings", icon: mdiCog },
   ];
 
   return (
     <>
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster position="top-right" />
 
-      
-
-      {/* Mobile toggle button */}
+      {/* Mobile Toggle */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md"
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-white shadow-md border border-orange-200"
         onClick={() => setMobileOpen(!mobileOpen)}
       >
-        <Icon path={mobileOpen ? mdiClose : mdiMenu} size={1} />
+        <Icon path={mobileOpen ? mdiClose : mdiMenu} size={1} className="text-orange-600" />
       </button>
 
-      {/* Sidebar overlay for mobile */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 bg-black/30 z-40 md:hidden"
+          className="fixed inset-0 bg-orange-200/30 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setMobileOpen(false)}
-        ></div>
+        />
       )}
 
+      {/* Premium Sidebar */}
       <motion.nav
-        initial={{ x: -300, opacity: 0 }}
+        initial={{ x: -270, opacity: 0 }}
         animate={{
-          x: mobileOpen || window.innerWidth >= 768 ? 0 : -300,
+          x: mobileOpen || window.innerWidth >= 768 ? 0 : -270,
           opacity: 1,
         }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-        className="fixed top-0 left-0 h-full w-72 md:w-75 bg-gradient-to-b from-white via-orange-50/40 to-white border-r shadow-xl flex flex-col justify-between z-50 rounded-tr-3xl md:top-12 md:h-[calc(100%-4rem)]"
-      >
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className="
+          fixed top-0 left-0 
+          h-full w-72 
+           bg-sky-200 
+border-r border-sky-300/50
 
-        
-        {/* Menu */}
-        <div className="flex flex-col py-6 px-2">
-          <img src="https://mvmbs.com/images/logo.webp" alt="" className="w-[50px] h-[50px]" />
-          {menuItems.map((item) => (
-            <Link
-              key={item.href}
-              to={item.href}
-              onClick={() => setMobileOpen(false)} // close menu on mobile
-              className={`flex items-center gap-4 px-4 py-3 rounded-xl my-1 transition-all duration-300 ${
-                active === item.href
-                  ? "bg-orange-500 text-white shadow-md"
-                  : "text-gray-700 hover:text-orange-500 hover:bg-orange-100/70"
-              }`}
-            >
-              <motion.div
-                whileHover={{ scale: 1.04, x: 5 }}
-                whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-4 w-full"
-              >
-                <Icon
-                  path={item.icon}
-                  size={1}
-                  className={`transition-colors duration-200 ${
-                    active === item.href ? "text-white" : "text-gray-500"
-                  }`}
-                />
-                <span
-                  className={`truncate font-medium ${
-                    active === item.href ? "text-white" : ""
-                  }`}
-                >
-                  {item.title}
-                </span>
-              </motion.div>
-            </Link>
-          ))}
+          shadow-[6px_0_25px_-5px_rgba(255,140,50,0.3)]
+          flex flex-col justify-between 
+          z-50
+        "
+      >
+        {/* Top Section */}
+        <div className="px-6">
+          <img
+            src='https://mvmbs.com/images/logo.webp'
+            className='w-16 h-16 mb-5 opacity-95'
+            alt=''
+          />
+
+          {/* Menu */}
+          <div className="flex flex-col gap-2">
+            {menuItems.map((item) => {
+              const isActive = active === item.href;
+              return (
+                <Link
+  key={item.href}
+  to={item.href}
+  onClick={() => setMobileOpen(false)}
+  className={`
+    group relative flex items-center gap-4 px-4 py-3 rounded-lg
+    text-base font-medium transition-all duration-300
+
+    ${isActive 
+      ? "bg-sky-400 text-black shadow-lg"    // ACTIVE
+      : "bg-sky-500 text-white hover:bg-sky-600"}   // DEFAULT
+  `}
+>
+  {/* Active highlight bar */}
+  {isActive && (
+    <motion.div
+      layoutId="bar"
+      className="absolute left-0 top-0 h-full w-1 bg-sky-700 rounded-r-full"
+    />
+  )}
+
+  <Icon
+    path={item.icon}
+    size={1}
+    className={`
+      transition-all
+      ${isActive ? "text-black" : "text-white group-hover:text-white"}
+    `}
+  />
+
+  <span>{item.title}</span>
+</Link>
+
+                
+              );
+            })}
+          </div>
         </div>
 
-        {/* User Section */}
-        <motion.div
-          initial={{ y: 40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="flex items-center justify-between px-5 py-4 border-t bg-white/60 backdrop-blur-md"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-red-400 text-white font-bold text-lg shadow-md">
-              {user?.name?.[0]?.toUpperCase() || "U"}
-            </div>
-            <div className="flex flex-col">
-              <span className="font-semibold text-gray-800 truncate">
-                {user?.name}
-              </span>
-              <span className="text-sm text-gray-500 truncate">
-                {user?.email || "Affiliate"}
-              </span>
-              {user?.pubId && (
-                <span className="text-xs text-orange-400 font-medium">
-                  Pub ID: {user.pubId}
-                </span>
-              )}
-            </div>
-          </div>
+        {/* Bottom User Area */}
+        <div className="px-5 py-5 border-t border-orange-300/40  bg-sky-500 
+ backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 flex items-center justify-center rounded-full 
+                 bg-gradient-to-r from-gray-700 to-gray-900
+                text-white font-bold text-lg shadow-md">
+                {user?.name?.[0]?.toUpperCase() || "U"}
+              </div>
 
-          <motion.button
-            whileHover={{ scale: 1.15, rotate: 10 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={handleLogout}
-            className="p-2 rounded-full hover:bg-orange-100 transition-all"
-          >
-            <Icon
-              path={mdiLogout}
-              size={1}
-              className="text-gray-500 hover:text-red-500"
-            />
-          </motion.button>
-        </motion.div>
+              <div className="flex flex-col">
+                <span className="font-semibold text-white truncate">
+                  {user?.name}
+                </span>
+                <span className="text-sm text-white truncate">
+                  {user?.email}
+                </span>
+                {user?.pubId && (
+                  <span className="text-xs text-white">Pub ID: {user.pubId}</span>
+                )}
+              </div>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleLogout}
+              className="p-2 rounded-full hover:bg-orange-100 transition"
+            >
+              <Icon
+                path={mdiLogout}
+                size={1}
+                className="text-gray-900 hover:text-red-black"
+              />
+            </motion.button>
+          </div>
+        </div>
       </motion.nav>
     </>
   );

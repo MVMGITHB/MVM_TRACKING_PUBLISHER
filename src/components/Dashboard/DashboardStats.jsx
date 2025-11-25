@@ -10,6 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { motion } from "framer-motion";
 import { baseurl } from "../helper/Helper";
 
 const DashboardStats = () => {
@@ -30,23 +31,17 @@ const DashboardStats = () => {
         const pubId = stored?.affiliate?.pubId;
 
         if (!pubId) {
-          console.warn("⚠️ No pubId found in user data");
           setLoading(false);
           return;
         }
 
-        
-
-        // ✅ Correct endpoints
         const [dailyRes, last10Res] = await Promise.all([
           axios.get(`${baseurl}/api/reports/dailypubId/${pubId}`),
           axios.get(`${baseurl}/api/reports/last10dayspubId/${pubId}`),
         ]);
 
-        // ✅ Daily stats
         setDailyStats(dailyRes.data || { clicks: 0, hosts: 0, conversions: 0 });
 
-        // ✅ Clean up chart data (ensure numeric)
         const cleanData = (last10Res.data?.data || []).map((item) => ({
           ...item,
           clicks: Number(item.clicks) || 0,
@@ -55,11 +50,7 @@ const DashboardStats = () => {
         }));
 
         setChartData(cleanData);
-
-        console.log("📊 Daily Stats:", dailyRes.data);
-        console.log("📈 Chart Data:", cleanData);
       } catch (error) {
-        console.error("❌ Error fetching stats:", error);
       } finally {
         setLoading(false);
       }
@@ -77,45 +68,60 @@ const DashboardStats = () => {
   }
 
   return (
-    <div className="p-6 space-y-8">
-      {/* 🟢 Daily Statistics Section */}
-      <h2 className="text-gray-800 text-lg font-semibold mb-2">
-        Daily Statistics
-      </h2>
+    <div className="pb-6 space-y-8">
 
+      {/* HEADER */}
+      <motion.h2
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="text-gray-800 text-xl font-bold"
+      >
+        Daily Statistics
+      </motion.h2>
+
+      {/* DAILY STATS CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {[
-          { title: "Clicks", value: dailyStats.clicks },
-          { title: "Hosts", value: dailyStats.hosts },
-          { title: "Conversions", value: dailyStats.conversions },
-        ].map((item, i) => (
-          <div
-            key={i}
-            className={`rounded-xl border ${
-              item.title === "Conversions"
-                ? "border-green-400"
-                : "border-gray-200"
-            } p-6 bg-white shadow-sm hover:shadow-md transition`}
+          { title: "Clicks", value: dailyStats.clicks, color: "text-orange-600" },
+          { title: "Hosts", value: dailyStats.hosts, color: "text-amber-600" },
+          { title: "Conversions", value: dailyStats.conversions, color: "text-green-600" },
+        ].map((item, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
+            whileHover={{ scale: 1.03 }}
+            className="
+             bg-gradient-to-b from-orange-50 to-sky-400
+              p-6 rounded-xl  shadow-sm
+              hover:shadow-lg transition-all duration-300
+            "
           >
             <p className="text-gray-600 font-medium">{item.title}</p>
-            <h3 className="text-3xl font-semibold text-gray-800 mt-2">
-              {item.value || 0}
+            <h3 className="text-4xl font-bold text-gray-800 mt-2">
+              {item.value}
             </h3>
-            <p
-              className={`text-xs mt-2 ${
-                item.title === "Conversions" ? "text-red-500" : "text-green-500"
-              }`}
-            >
+            <p className={`text-sm mt-2 font-semibold ${item.value > 0 ? item.color : "text-gray-400"}`}>
               {item.value > 0 ? "↑" : "—"}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
 
-      {/* 📊 Chart Section */}
-      <div className="bg-white shadow-md rounded-xl p-6">
-        <h3 className="text-gray-800 font-semibold mb-4 uppercase">
-          Statistics for the last 10 days
+      {/* CHART SECTION */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.98 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4 }}
+        className="
+          bg-gradient-to-b from-orange-50 via-white to-sky-200
+          shadow-lg  rounded-xl p-8
+        "
+      >
+        <h3 className="text-gray-800 font-semibold mb-4 uppercase tracking-wide">
+          Statistics for the Last 10 Days
         </h3>
 
         {chartData.length === 0 ? (
@@ -123,49 +129,48 @@ const DashboardStats = () => {
             No data available for the last 10 days.
           </p>
         ) : (
-          <ResponsiveContainer width="100%" height={320}>
+          <ResponsiveContainer width="100%" height={330}>
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              {/* Two Y-axes for better scaling */}
-              <YAxis yAxisId="left" />
-              <YAxis yAxisId="right" orientation="right" />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="4 4" stroke="#f3d6b2" />
+
+              <XAxis dataKey="date" stroke="#c47f3e" tick={{ fontSize: 12 }} />
+              <YAxis stroke="#c47f3e" />
+              <Tooltip contentStyle={{ backgroundColor: "#fff7ed", borderRadius: "10px" }} />
               <Legend />
-              {/* 🟣 Clicks Line */}
+
+              {/* Clicks Line */}
               <Line
-                yAxisId="left"
                 type="monotone"
                 dataKey="clicks"
-                stroke="#a855f7"
-                name="Clicks"
-                strokeWidth={2}
+                stroke="#f97316"
+                strokeWidth={3}
                 dot={{ r: 3 }}
+                name="Clicks"
               />
-              {/* 🟢 Conversions Line */}
+
+              {/* Conversions Line */}
               <Line
-                yAxisId="left"
                 type="monotone"
                 dataKey="conversions"
                 stroke="#22c55e"
-                name="Conversions"
-                strokeWidth={2}
+                strokeWidth={3}
                 dot={{ r: 3 }}
+                name="Conversions"
               />
-              {/* 🟡 Revenue Line */}
+
+              {/* Revenue Line */}
               <Line
-                yAxisId="right"
                 type="monotone"
                 dataKey="revenue"
                 stroke="#eab308"
-                name="Revenue (USD)"
-                strokeWidth={2}
+                strokeWidth={3}
                 dot={{ r: 3 }}
+                name="Revenue (USD)"
               />
             </LineChart>
           </ResponsiveContainer>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

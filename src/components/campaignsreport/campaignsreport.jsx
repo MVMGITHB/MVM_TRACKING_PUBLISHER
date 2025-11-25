@@ -169,16 +169,44 @@ export default function CampaignReport() {
   }, []);
 
   return (
-    <div className="bg-white rounded-xl p-6 mb-6 border shadow-2xl">
-      {/* Date Picker & Actions */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-4">
-        <div className="flex gap-2 flex-wrap items-center">
+  <div
+    className="
+      bg-gradient-to-b from-sky-200 via-orange-50 to-white
+      border border-sky-300/50
+      shadow-xl rounded-2xl p-6 mb-10
+      transition-all duration-500
+      animate-fadeIn space-y-8
+    "
+  >
+    {/* Title */}
+    <div className="mb-6">
+      <h1 className="text-2xl font-bold text-gray-800 tracking-wide">
+        📊 Campaign Report
+      </h1>
+      <p className="text-gray-600 text-sm mt-1">
+        View and export your performance analytics.
+      </p>
+    </div>
 
-          {/* ✅ Dropdown */}
+    {/* Filters */}
+    <div
+      className="
+        flex flex-col md:flex-row md:items-center md:justify-between 
+        gap-4 mb-6
+      "
+    >
+      <div className="flex flex-wrap items-center gap-3">
+
+        {/* Range Dropdown */}
+        <div className="bg-white rounded-lg shadow border border-sky-200">
           <select
             value={rangeType}
             onChange={(e) => handleRangeChange(e.target.value)}
-            className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="
+              px-4 py-2 rounded-lg text-gray-700
+              focus:ring-2 focus:ring-sky-400 focus:outline-none
+              transition
+            "
           >
             <option value="today">Today</option>
             <option value="yesterday">Yesterday</option>
@@ -188,76 +216,109 @@ export default function CampaignReport() {
             <option value="lastmonth">Last Month</option>
             <option value="custom">Custom Range</option>
           </select>
-
-          {/* ✅ Show only if Custom */}
-          {rangeType === "custom" && (
-            <div className="flex gap-2">
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              />
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              />
-            </div>
-          )}
-
-          <button
-            onClick={fetchReport}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            <i className="fa fa-download"></i> Fetch Report
-          </button>
-
-          <button
-            onClick={exportCSV}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-          >
-            <i className="fa fa-file-csv"></i> Export CSV
-          </button>
         </div>
-      </div>
 
-      {/* Report Table */}
-      {report.length > 0 ? (
-        <div className="overflow-x-auto p-6" id="hide-scrollbar">
-          <table className="min-w-full divide-y divide-gray-200 border">
-            <thead className="bg-gray-50">
-              <tr>
-                {Object.keys(report[0]).map((key) => (
-                  <th
-                    key={key}
-                    className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+        {/* Custom Date Range */}
+        {rangeType === "custom" && (
+          <div className="flex gap-2">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="
+                px-3 py-2 rounded-lg border border-sky-200 bg-white
+                shadow focus:ring-2 focus:ring-sky-400 outline-none
+              "
+            />
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="
+                px-3 py-2 rounded-lg border border-sky-200 bg-white
+                shadow focus:ring-2 focus:ring-sky-400 outline-none
+              "
+            />
+          </div>
+        )}
+
+        {/* Fetch Button */}
+        <button
+          onClick={fetchReport}
+          className="
+            flex items-center gap-2 px-4 py-2
+            bg-sky-600 hover:bg-sky-700 text-white
+            rounded-lg shadow transition
+          "
+        >
+          <i className="fa fa-search"></i> Fetch Report
+        </button>
+
+        {/* CSV Button */}
+        <button
+          onClick={exportCSV}
+          className="
+            flex items-center gap-2 px-4 py-2
+            bg-green-600 hover:bg-green-700 text-white
+            rounded-lg shadow transition
+          "
+        >
+          <i className="fa fa-file-csv"></i> Export CSV
+        </button>
+      </div>
+    </div>
+
+    {/* Report Table */}
+    {report.length > 0 ? (
+      <div
+        className="
+          overflow-x-auto rounded-xl border border-sky-200 shadow-md bg-white
+          animate-slideUp
+        "
+        id="hide-scrollbar"
+      >
+        <table className="min-w-full text-left">
+          <thead className="bg-gradient-to-r from-sky-100 to-orange-100 border-b border-sky-200">
+            <tr>
+              {Object.keys(report[0]).map((key) => (
+                <th
+                  key={key}
+                  className="px-4 py-3 text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                >
+                  {key}
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody>
+            {report.map((row, i) => (
+              <tr
+                key={i}
+                className={`
+                  ${i % 2 === 0 ? "bg-orange-50/40" : "bg-white"} 
+                  hover:bg-orange-100/40 transition
+                `}
+              >
+                {Object.values(row).map((val, j) => (
+                  <td
+                    key={j}
+                    className="px-4 py-3 text-sm text-gray-800"
                   >
-                    {key}
-                  </th>
+                    {val}
+                  </td>
                 ))}
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-100">
-              {report.map((row, i) => (
-                <tr key={i} className={i % 2 === 0 ? "bg-gray-50" : ""}>
-                  {Object.values(row).map((val, j) => (
-                    <td
-                      key={j}
-                      className="px-4 py-2 text-sm text-gray-700 whitespace-nowrap"
-                    >
-                      {val}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <p className="text-gray-500 mt-4">No report data available.</p>
-      )}
-    </div>
-  );
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <p className="text-gray-600 text-center mt-4 animate-fadeIn">
+        No report data available.
+      </p>
+    )}
+  </div>
+);
+
 }
