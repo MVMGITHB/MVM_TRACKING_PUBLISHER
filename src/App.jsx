@@ -14,6 +14,7 @@ import Settings from "./pages/Settings.jsx";
 import LoginForm from "./components/UserManagement/login.jsx";
 import ConversionReport from "./components/conversion/ConversionReport.jsx";
 import Conversion from "./pages/Conversion.jsx";
+import RootRedirect from "./components/UserManagement/RootRedirect.jsx";
 
 // Elegant Layout wrapper for protected routes
 function AppLayout({ active, setActive, children }) {
@@ -51,6 +52,8 @@ export default function App() {
       <Routes>
         {/* Public Login */}
         <Route path="/login" element={<LoginForm />} />
+
+         <Route path="/" element={<RootRedirect />} />
         {/* <Route path="/" element={<LoginForm />} /> */}
 
         {/* Protected Routes */}
@@ -73,6 +76,8 @@ export default function App() {
                     path="/partner/conversion"
                     element={<Conversion />}
                   />
+
+                  <Route path="/partner/conversion/:id" element={<Conversion />} />
                   {/* <Route path="/partner/" element={} /> */}
                   <Route path="/partner/my-settings" element={<Settings />} />
                   <Route
