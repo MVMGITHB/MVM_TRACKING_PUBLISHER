@@ -1,9 +1,18 @@
 // components/UserManagement/ProtectedRoute.jsx
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../helper/auth";
+import { useEffect } from "react";
 
 export default function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
+  
+  const navigate = useNavigate()
+
+  useEffect(() => {
+  if (user) {
+    navigate("/partner/statistics-dashboard");
+  }
+}, [user]);
 
   if (loading) {
     return (
