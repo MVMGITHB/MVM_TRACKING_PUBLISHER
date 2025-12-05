@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../baseurl/baseurl";
 import { ClipboardCopy, RefreshCw, Plus } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { baseurl } from "../helper/Helper";
 
 // --- Helpers ---
 function safeParse(raw) {
@@ -92,7 +93,7 @@ export default function OfferDetailsFull() {
   };
 
   const buildTrackingUrl = (compId, pubId) =>
-    `https://offer.mvmtracking.com/api/clicks?campaign_id=${compId}&pub_id=${pubId}&originalClick={}`;
+    `${baseurl}/api/clicks?campaign_id=${compId}&pub_id=${pubId}&affiliate_id={your_id}&sub1={your_sub}`;
 
   // Static labels
   const accessibility = "Accessible";

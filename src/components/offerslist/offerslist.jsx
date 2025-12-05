@@ -46,7 +46,7 @@ export default function OffersTable() {
   }, []);
 
   const buildTrackingUrl = (compId, pubId) =>
-    `${baseurl}/api/clicks?campaign_id=${compId}&pub_id=${pubId}&originalClick={}`;
+    `${baseurl}/api/clicks?campaign_id=${compId}&pub_id=${pubId}&affiliate_id={your_id}&sub1={your_sub}`;
 
   const filteredOffers = campaigns.filter((offer) => {
     if (activeTab === "featured") return offer.featured;

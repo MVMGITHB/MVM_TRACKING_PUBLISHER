@@ -81,48 +81,65 @@ export default function CampaignReport() {
     );
   };
 
-  // ✅ Handle Range Type Change
   const handleRangeChange = (value) => {
-    setRangeType(value);
-    const today = new Date();
-    let start, end;
+  setRangeType(value);
 
-    switch (value) {
-      case "today":
-        start = end = today;
-        break;
-      case "yesterday":
-        start = end = new Date(today.setDate(today.getDate() - 1));
-        break;
-      case "week":
-        end = new Date();
-        start = new Date();
-        start.setDate(end.getDate() - 6);
-        break;
-      case "lastweek":
-        end = new Date();
-        end.setDate(end.getDate() - 7);
-        start = new Date();
-        start.setDate(end.getDate() - 6);
-        break;
-      case "month":
-        end = new Date();
-        start = new Date(end.getFullYear(), end.getMonth(), 1);
-        break;
-      case "lastmonth":
-        end = new Date(end.getFullYear(), end.getMonth(), 0); // last day of prev month
-        start = new Date(end.getFullYear(), end.getMonth(), 1);
-        break;
-      case "custom":
-        return; // do nothing, wait for manual date selection
-      default:
-        return;
-    }
+  const today = new Date();
+  let start, end;
 
-    const formatDate = (d) => d.toISOString().split("T")[0];
-    setStartDate(formatDate(start));
-    setEndDate(formatDate(end));
-  };
+  switch (value) {
+    case "today":
+      start = new Date(today);
+      end = new Date(today);
+      break;
+
+    case "yesterday":
+      start = new Date(today);
+      start.setDate(start.getDate() - 1);
+      end = new Date(start);
+      break;
+
+    case "week": // last 7 days including today
+      end = new Date(today);
+      start = new Date(today);
+      start.setDate(start.getDate() - 6);
+      break;
+
+    case "lastweek":
+      // last full 7 days before today
+      end = new Date(today);
+      end.setDate(end.getDate() - 7);
+
+      start = new Date(end);
+      start.setDate(start.getDate() - 6);
+      break;
+
+    case "month": // current month
+      end = new Date(today);
+      start = new Date(today.getFullYear(), today.getMonth(), 1);
+      break;
+
+    case "lastmonth":
+      // last month's end
+      end = new Date(today.getFullYear(), today.getMonth(), 0);
+
+      // last month's start
+      start = new Date(end.getFullYear(), end.getMonth(), 1);
+      break;
+
+    case "custom":
+      return; // user picks dates manually
+
+    default:
+      return;
+  }
+
+  const format = (d) => d.toISOString().split("T")[0];
+
+  setStartDate(format(start));
+  setEndDate(format(end));
+};
+
 
   useEffect(() => {
     fetchReport();
